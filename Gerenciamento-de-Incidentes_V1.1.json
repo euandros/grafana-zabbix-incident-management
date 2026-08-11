@@ -1,0 +1,674 @@
+{
+  "apiVersion": "dashboard.grafana.app/v2",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "gerenciamento-incidentes-community-businesscharts",
+    "namespace": "default",
+    "uid": "721d3cb7-48b1-4724-89af-dba9858fdc82",
+    "resourceVersion": "1778258121875019",
+    "generation": 3,
+    "creationTimestamp": "2026-05-08T06:47:49Z",
+    "labels": {
+      "grafana.app/deprecatedInternalID": "29"
+    },
+    "annotations": {
+      "grafana.app/createdBy": "user:dfhpn4069r4e8d",
+      "grafana.app/folder": "dfl5hshg4w0sgd",
+      "grafana.app/saved-from-ui": "Grafana v12.4.2 (ebade4c739)",
+      "grafana.app/updatedBy": "user:dfhpn4069r4e8d",
+      "grafana.app/updatedTimestamp": "2026-05-08T16:35:21Z",
+      "grafana.app/folderTitle": "Community",
+      "grafana.app/folderUrl": "/dashboards/f/dfl5hshg4w0sgd/evandro_labs"
+    }
+  },
+  "spec": {
+    "annotations": [
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "grafana",
+            "version": "v0",
+            "datasource": {
+              "name": "-- Grafana --"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "builtIn": true,
+          "legacyOptions": {
+            "type": "dashboard"
+          }
+        }
+      }
+    ],
+    "cursorSync": "Off",
+    "editable": true,
+    "elements": {
+      "panel-1": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1,
+          "title": "Incidentes ativos · prioridade",
+          "description": "Fila operacional premium dos problemas ativos retornados pela consulta Zabbix. Datas normalizadas no Business Charts para DD/MM/AAAA HH:mm.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "alexanderzobnin-zabbix-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "zabbix-monitoramento"
+                      },
+                      "spec": {
+                        "application": {
+                          "filter": ""
+                        },
+                        "countTriggersBy": "",
+                        "evaltype": "0",
+                        "functions": [],
+                        "group": {
+                          "filter": "/.*/"
+                        },
+                        "host": {
+                          "filter": "/.*/"
+                        },
+                        "item": {
+                          "filter": ""
+                        },
+                        "itemTag": {
+                          "filter": ""
+                        },
+                        "macro": {
+                          "filter": ""
+                        },
+                        "options": {
+                          "acknowledged": 2,
+                          "count": false,
+                          "disableDataAlignment": false,
+                          "hostProxy": false,
+                          "hostsInMaintenance": false,
+                          "limit": 1001,
+                          "minSeverity": 0,
+                          "severities": [
+                            4,
+                            5,
+                            3
+                          ],
+                          "showDisabledItems": false,
+                          "skipEmptyValues": false,
+                          "sortProblems": "default",
+                          "useTimeRange": false,
+                          "useTrends": "default",
+                          "useZabbixValueMapping": false
+                        },
+                        "proxy": {
+                          "filter": ""
+                        },
+                        "queryType": "5",
+                        "resultFormat": "time_series",
+                        "schema": 12,
+                        "showProblems": "problems",
+                        "table": {
+                          "skipEmptyValues": false
+                        },
+                        "tags": {
+                          "filter": ""
+                        },
+                        "textFilter": "",
+                        "trigger": {
+                          "filter": ""
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "volkovlabs-echarts-panel",
+            "version": "7.2.5",
+            "spec": {
+              "options": {
+                "renderer": "canvas",
+                "getOption": "\nconst W = Math.max(1, context.panel.chart.getWidth());\nconst H = Math.max(1, context.panel.chart.getHeight());\nconst echarts = context.echarts;\n\nconst C = {\n  bg0: '#050B16', bg1: '#08111F', card: '#0D1B2E', card2: '#12243A',\n  border: 'rgba(174,186,213,0.16)', text: '#F4F7FC', sub: '#AEBAD5', mute: '#7F8DA8',\n  cyan: '#17C7D5', purple: '#7C3AED', green: '#14B8A6', orange: '#F59E0B',\n  red: '#EF4444', blue: '#38BDF8', gray: '#64748B', yellow: '#EAB308', deepRed: '#DC2626'\n};\n\nfunction vals(f) {\n  if (!f || f.values == null) return [];\n  if (Array.isArray(f.values)) return f.values;\n  if (typeof f.values.toArray === 'function') return f.values.toArray();\n  if (f.values.buffer && Array.isArray(f.values.buffer)) return f.values.buffer;\n  try { return Array.from(f.values); } catch (e) { return []; }\n}\n\nfunction normalizeTime(v) {\n  if (v === null || v === undefined || v === '') return null;\n  if (v instanceof Date) return v.getTime();\n  if (typeof v === 'object') {\n    if (v._d instanceof Date) return v._d.getTime();\n    if (typeof v.valueOf === 'function') {\n      const vv = v.valueOf();\n      if (vv !== v && Number.isFinite(Number(vv))) {\n        const n = Number(vv);\n        return Math.abs(n) < 1e12 ? n * 1000 : n;\n      }\n    }\n  }\n  const n = Number(v);\n  if (Number.isFinite(n)) return Math.abs(n) < 1e12 ? n * 1000 : n;\n  const parsed = Date.parse(String(v));\n  return Number.isFinite(parsed) ? parsed : null;\n}\n\nfunction fmtDateTime(v) {\n  const ts = normalizeTime(v);\n  if (ts === null) return '—';\n  const d = new Date(ts);\n  if (Number.isNaN(d.getTime())) return String(v ?? '—');\n  const z = n => String(n).padStart(2, '0');\n  return `${z(d.getDate())}/${z(d.getMonth() + 1)}/${d.getFullYear()} ${z(d.getHours())}:${z(d.getMinutes())}`;\n}\n\nfunction ageText(v) {\n  const ts = normalizeTime(v);\n  if (ts === null) return '—';\n  let sec = Math.max(0, Math.floor((Date.now() - ts) / 1000));\n  if (sec < 60) return `${sec}s`;\n  const min = Math.floor(sec / 60);\n  if (min < 60) return `${min} min`;\n  const h = Math.floor(min / 60);\n  if (h < 24) return `${h}h ${min % 60}m`;\n  const days = Math.floor(h / 24);\n  return `${days}d ${h % 24}h`;\n}\n\nfunction txt(x, y, text, size, color, weight, align = 'left', extra = {}) {\n  return {\n    type: 'text', silent: true,\n    style: {\n      x, y, text: String(text), font: `${weight || 500} ${size}px Inter, sans-serif`,\n      fill: color || C.text, textAlign: align, textVerticalAlign: 'middle', ...extra\n    }\n  };\n}\n\nfunction roundedCard(fill = C.card) {\n  return {\n    type: 'rect', silent: true,\n    shape: { x: 1, y: 1, width: Math.max(0, W - 2), height: Math.max(0, H - 2), r: 14 },\n    style: { fill, stroke: C.border, lineWidth: 1, shadowBlur: 18, shadowColor: 'rgba(0,0,0,.18)' }\n  };\n}\n\nfunction accentLine(color) {\n  return {\n    type: 'rect', silent: true,\n    shape: { x: 0, y: 0, width: 4, height: H, r: [14, 0, 0, 14] },\n    style: { fill: color }\n  };\n}\n\nfunction esc(v) {\n  return String(v ?? '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\"/g, '&quot;')\n    .replace(/'/g, '&#39;');\n}\n\nfunction objName(v) {\n  if (v === null || v === undefined) return '';\n  if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') return String(v);\n  if (Array.isArray(v)) return v.map(objName).filter(Boolean).join(', ');\n  if (typeof v === 'object') {\n    return String(v.name ?? v.host ?? v.value ?? v.tag ?? v.description ?? '');\n  }\n  return String(v);\n}\n\nfunction problemsFromFrames() {\n  const frames = (context.panel.data && context.panel.data.series) || [];\n  const out = [];\n  for (const frame of frames) {\n    if (!frame || !frame.fields) continue;\n    const pf = frame.fields.find(f => String(f.name).toLowerCase() === 'problems') ||\n      frame.fields.find(f => f.config && f.config.custom && f.config.custom.type === 'problems');\n    if (!pf) continue;\n    for (const p of vals(pf)) {\n      if (p && typeof p === 'object') out.push(p);\n    }\n  }\n  return out;\n}\n\nconst SEV = [\n  { short: 'N/C', label: 'Não classificado', color: C.gray },\n  { short: 'INFO', label: 'Informação', color: C.blue },\n  { short: 'AVISO', label: 'Warning', color: C.yellow },\n  { short: 'MÉDIA', label: 'Average', color: C.orange },\n  { short: 'ALTA', label: 'High', color: C.red },\n  { short: 'DESASTRE', label: 'Disaster', color: C.deepRed }\n];\n\nfunction sevRank(p) {\n  const n = Number(p && p.severity);\n  return Number.isFinite(n) && n >= 0 && n <= 5 ? n : null;\n}\n\nfunction sevMeta(p) {\n  const n = sevRank(p);\n  return n === null ? { short: 'N/C', label: 'Não classificado', color: C.gray } : SEV[n];\n}\n\nfunction hostName(p) {\n  const hs = p && p.hosts;\n  if (Array.isArray(hs) && hs.length) return objName(hs[0]) || '—';\n  return objName(hs) || '—';\n}\n\nfunction groupName(p) {\n  const gs = p && p.groups;\n  if (Array.isArray(gs) && gs.length) return gs.map(objName).filter(Boolean).slice(0, 2).join(' · ') || '';\n  return objName(gs);\n}\n\nfunction acknowledged(p) {\n  if (!p) return false;\n  if (p.acknowledged === true || p.acknowledged === 1 || String(p.acknowledged) === '1') return true;\n  return Array.isArray(p.acknowledges) && p.acknowledges.length > 0;\n}\n\nfunction ackSummary(p) {\n  const a = Array.isArray(p && p.acknowledges) ? p.acknowledges : [];\n  if (!a.length) return 'Sem reconhecimento';\n  const last = a[a.length - 1] || {};\n  const who = last.user || [last.name, last.surname].filter(Boolean).join(' ') || 'usuário';\n  const when = last.time || fmtDateTime(last.clock);\n  return `${who}${when && when !== '—' ? ' · ' + when : ''}`;\n}\n\nfunction isRecovered(p) {\n  return HISTORY_MODE && String(p && p.value) === '0';\n}\n\nfunction isRecent(p) {\n  const ts = normalizeTime(p && p.timestamp);\n  if (ts === null) return false;\n  return (Date.now() - ts) <= RECENT_MINUTES * 60 * 1000;\n}\n\nconst HISTORY_MODE = false;\nconst RECENT_MINUTES = 15;\nconst MIN_VISIBLE_SEVERITY = 3;\n\nlet rows = problemsFromFrames();\nrows = rows.filter(p => {\n  const s = sevRank(p);\n  return s === null || s >= MIN_VISIBLE_SEVERITY;\n});\nrows.sort((a, b) => {\n  const sa = sevRank(a) ?? -1;\n  const sb = sevRank(b) ?? -1;\n  if (sb !== sa) return sb - sa;\n  const ta = normalizeTime(a.timestamp) ?? 0;\n  const tb = normalizeTime(b.timestamp) ?? 0;\n  return tb - ta;\n});\n\nconst total = rows.length;\nconst counts = [0, 0, 0, 0, 0, 0];\nlet acked = 0;\nlet recent = 0;\nfor (const p of rows) {\n  const s = sevRank(p);\n  if (s !== null) counts[s]++;\n  if (acknowledged(p)) acked++;\n  if (isRecent(p)) recent++;\n}\n\nif (!total) {\n  return {\n    backgroundColor: 'transparent',\n    graphic: [\n      roundedCard(), accentLine(C.cyan),\n      txt(22, 27, \"INCIDENTES ATIVOS · ALTA PRIORIDADE\", 14, C.text, 850),\n      txt(22, 53, \"Problemas ativos Average, High e Disaster · reconhecimento, idade e dados operacionais.\", 10, C.sub, 500),\n      txt(22, Math.max(105, H * 0.48), 'Nenhum incidente encontrado', 18, C.text, 800),\n      txt(22, Math.max(134, H * 0.48 + 30), 'A consulta Zabbix não retornou eventos visíveis para esta classificação.', 11, C.mute, 500)\n    ],\n    xAxis: { show: false }, yAxis: { show: false }, series: []\n  };\n}\n\nconst visibleRows = Math.max(6, Math.min(13, Math.floor((H - 132) / 38)));\nconst compactMode = W < 1050;\nconst showGroup = W >= 1280;\nconst showOpdata = W >= 1180;\nconst showAck = W >= 900;\n\nconst graphics = [\n  roundedCard(), accentLine(C.cyan),\n  txt(22, 24, \"INCIDENTES ATIVOS · ALTA PRIORIDADE\", 14, C.text, 850),\n  txt(22, 49, \"Problemas ativos Average, High e Disaster · reconhecimento, idade e dados operacionais.\", 10, C.sub, 500),\n  txt(W - 22, 24, `${total.toLocaleString('pt-BR')} EVENTOS`, 10, C.cyan, 850, 'right'),\n  txt(W - 22, 49, `${acked.toLocaleString('pt-BR')} reconhecidos · ${recent.toLocaleString('pt-BR')} recentes`, 9, C.mute, 650, 'right'),\n\n  { type: 'circle', silent: true, shape: { cx: 24, cy: 76, r: 4 }, style: { fill: C.deepRed } },\n  txt(34, 76, `Desastre ${counts[5]}`, 9, C.sub, 700),\n  { type: 'circle', silent: true, shape: { cx: 126, cy: 76, r: 4 }, style: { fill: C.red } },\n  txt(136, 76, `Alta ${counts[4]}`, 9, C.sub, 700),\n  { type: 'circle', silent: true, shape: { cx: 204, cy: 76, r: 4 }, style: { fill: C.orange } },\n  txt(214, 76, `Média ${counts[3]}`, 9, C.sub, 700),\n\n  txt(18, 98, 'SEVERIDADE', 8, C.mute, 800),\n  txt(W * (compactMode ? 0.14 : 0.12), 98, 'ÚLTIMA ALTERAÇÃO', 8, C.mute, 800),\n  txt(W * (compactMode ? 0.33 : 0.29), 98, 'HOST', 8, C.mute, 800),\n  txt(W * (compactMode ? 0.52 : 0.47), 98, 'PROBLEMA / DADOS OPERACIONAIS', 8, C.mute, 800)\n];\nif (showAck) graphics.push(txt(W * 0.89, 98, HISTORY_MODE ? 'STATUS / ACK' : 'RECONHECIMENTO', 8, C.mute, 800));\n\ngraphics.push({\n  type: 'line', silent: true,\n  shape: { x1: 16, y1: 108, x2: W - 16, y2: 108 },\n  style: { stroke: 'rgba(174,186,213,.12)', lineWidth: 1 }\n});\n\nfunction rowRender(params, api) {\n  const idx = Number(api.value(1));\n  const p = rows[idx];\n  if (!p) return null;\n  const key = String(idx);\n  const y = api.coord([0, key])[1];\n  let band = api.size([0, 1])[1];\n  if (!Number.isFinite(band) || band <= 0) band = 38;\n  const rh = Math.max(30, Math.min(44, band * 0.84));\n  const x0 = api.coord([0, key])[0];\n  const x100 = api.coord([100, key])[0];\n  const cx = pct => api.coord([pct, key])[0];\n  const sm = sevMeta(p);\n  const recentFlag = isRecent(p);\n  const rec = acknowledged(p);\n  const recovered = isRecovered(p);\n  const host = hostName(p);\n  const group = groupName(p);\n  const problem = String(p.name || p.description || 'Evento Zabbix');\n  const op = String(p.opdata || '');\n  const date = fmtDateTime(p.timestamp);\n  const age = ageText(p.timestamp);\n\n  const bg = idx % 2 === 0 ? 'rgba(13,27,46,.78)' : 'rgba(18,36,58,.58)';\n  const children = [\n    {\n      type: 'rect',\n      shape: { x: x0 + 2, y: y - rh / 2, width: Math.max(0, x100 - x0 - 5), height: rh, r: 7 },\n      style: {\n        fill: recentFlag ? 'rgba(23,199,213,.055)' : bg,\n        stroke: recentFlag ? 'rgba(23,199,213,.20)' : 'rgba(174,186,213,.055)',\n        lineWidth: 1\n      }\n    },\n    {\n      type: 'rect',\n      shape: { x: x0 + 2, y: y - rh / 2, width: 3, height: rh, r: [7, 0, 0, 7] },\n      style: { fill: sm.color }\n    },\n    { type: 'circle', shape: { cx: cx(1.7), cy: y, r: 4.2 }, style: { fill: sm.color } },\n    {\n      type: 'text',\n      style: { x: cx(2.7), y, text: sm.short, font: '750 9px Inter, sans-serif', fill: sm.color, verticalAlign: 'middle' }\n    },\n    {\n      type: 'text',\n      style: { x: cx(compactMode ? 14 : 12), y: y - 7, text: date, font: '650 10px Inter, sans-serif', fill: C.text, verticalAlign: 'middle' }\n    },\n    {\n      type: 'text',\n      style: { x: cx(compactMode ? 14 : 12), y: y + 9, text: age, font: '500 9px Inter, sans-serif', fill: recentFlag ? C.cyan : C.mute, verticalAlign: 'middle' }\n    },\n    {\n      type: 'text',\n      style: {\n        x: cx(compactMode ? 33 : 29), y: y - (showGroup && group ? 7 : 0), text: host,\n        font: '700 10px Inter, sans-serif', fill: C.text, verticalAlign: 'middle',\n        width: Math.max(80, cx(compactMode ? 50 : 45.5) - cx(compactMode ? 33 : 29) - 10), overflow: 'truncate', ellipsis: '…'\n      }\n    },\n    {\n      type: 'text',\n      style: {\n        x: cx(compactMode ? 52 : 47), y: y - (showOpdata && op ? 7 : 0), text: problem,\n        font: '650 10px Inter, sans-serif', fill: C.text, verticalAlign: 'middle',\n        width: Math.max(150, cx(showAck ? 87.5 : 98) - cx(compactMode ? 52 : 47) - 12), overflow: 'truncate', ellipsis: '…'\n      }\n    }\n  ];\n\n  if (showGroup && group) {\n    children.push({\n      type: 'text',\n      style: {\n        x: cx(29), y: y + 9, text: group, font: '500 8.5px Inter, sans-serif', fill: C.mute,\n        verticalAlign: 'middle', width: Math.max(80, cx(45.5) - cx(29) - 10), overflow: 'truncate', ellipsis: '…'\n      }\n    });\n  }\n\n  if (showOpdata && op) {\n    children.push({\n      type: 'text',\n      style: {\n        x: cx(47), y: y + 9, text: op, font: '500 8.5px Inter, sans-serif', fill: C.mute,\n        verticalAlign: 'middle', width: Math.max(150, cx(showAck ? 87.5 : 98) - cx(47) - 12), overflow: 'truncate', ellipsis: '…'\n      }\n    });\n  }\n\n  if (showAck) {\n    let label = rec ? 'RECONHECIDO' : 'PENDENTE';\n    let color = rec ? C.green : C.orange;\n    if (HISTORY_MODE && recovered) { label = 'RECUPERADO'; color = C.green; }\n    children.push(\n      { type: 'circle', shape: { cx: cx(89.2), cy: y - 1, r: 3.5 }, style: { fill: color } },\n      {\n        type: 'text',\n        style: {\n          x: cx(90.2), y: y - 1, text: label, font: '750 8.5px Inter, sans-serif', fill: color,\n          verticalAlign: 'middle', width: Math.max(55, x100 - cx(90.2) - 8), overflow: 'truncate', ellipsis: '…'\n        }\n      }\n    );\n  }\n\n  return { type: 'group', children };\n}\n\nconst zoom = total > visibleRows ? [\n  {\n    type: 'inside', yAxisIndex: 0, startValue: 0, endValue: visibleRows - 1,\n    zoomOnMouseWheel: false, moveOnMouseWheel: true, moveOnMouseMove: true\n  },\n  {\n    type: 'slider', yAxisIndex: 0, right: 5, top: 112, bottom: 18, width: 7,\n    startValue: 0, endValue: visibleRows - 1, showDetail: false, showDataShadow: false,\n    borderColor: 'transparent', backgroundColor: 'rgba(127,141,168,.08)',\n    fillerColor: 'rgba(23,199,213,.24)', handleSize: 0,\n    textStyle: { color: C.mute }\n  }\n] : [];\n\nreturn {\n  backgroundColor: 'transparent',\n  animation: false,\n  graphic: graphics,\n  grid: { left: 16, right: total > visibleRows ? 18 : 12, top: 112, bottom: 16, containLabel: false },\n  tooltip: {\n    trigger: 'item',\n    backgroundColor: 'rgba(5,11,22,.98)', borderColor: C.border, borderWidth: 1,\n    padding: [11, 13], textStyle: { color: C.text, fontSize: 11 },\n    formatter: function(params) {\n      const raw = params && params.data;\n      const idx = raw ? Number(raw[1]) : -1;\n      const p = rows[idx];\n      if (!p) return '';\n      const sm = sevMeta(p);\n      const tags = Array.isArray(p.tags) ? p.tags.map(t => {\n        const k = t && (t.tag || t.name) ? (t.tag || t.name) : '';\n        const v = t && t.value ? t.value : '';\n        return [k, v].filter(Boolean).join(':');\n      }).filter(Boolean).join(', ') : objName(p.tags);\n      const op = p.opdata ? String(p.opdata) : '';\n      const desc = String(p.name || p.description || 'Evento Zabbix');\n      const state = HISTORY_MODE && isRecovered(p) ? 'Recuperado' : (acknowledged(p) ? 'Reconhecido' : 'Pendente de reconhecimento');\n      let html = `<div style=\"min-width:320px;max-width:620px\">`;\n      html += `<div style=\"font-weight:800;font-size:12px;color:${sm.color};margin-bottom:7px\">${esc(sm.label)} · ${esc(state)}</div>`;\n      html += `<div style=\"font-weight:750;color:${C.text};margin-bottom:9px\">${esc(desc)}</div>`;\n      html += `<div style=\"color:${C.sub};line-height:1.65\">`;\n      html += `<b>Host:</b> ${esc(hostName(p))}<br>`;\n      html += `<b>Última alteração:</b> ${esc(fmtDateTime(p.timestamp))} · ${esc(ageText(p.timestamp))}<br>`;\n      if (groupName(p)) html += `<b>Grupo:</b> ${esc(groupName(p))}<br>`;\n      if (op) html += `<b>Dados operacionais:</b> ${esc(op)}<br>`;\n      html += `<b>Reconhecimento:</b> ${esc(ackSummary(p))}`;\n      if (tags) html += `<br><b>Tags:</b> ${esc(tags)}`;\n      html += `</div></div>`;\n      return html;\n    }\n  },\n  xAxis: { type: 'value', min: 0, max: 100, show: false },\n  yAxis: {\n    type: 'category', inverse: true, show: false,\n    data: rows.map((_, i) => String(i)),\n    boundaryGap: true\n  },\n  dataZoom: zoom,\n  series: [\n    {\n      type: 'custom', coordinateSystem: 'cartesian2d', renderItem: rowRender,\n      data: rows.map((_, i) => [0, String(i)]),\n      encode: { x: 0, y: 1 },\n      silent: false,\n      progressive: 200,\n      progressiveThreshold: 300\n    }\n  ]\n};\n",
+                "theme": "default"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  }
+                },
+                "overrides": []
+              }
+            }
+          },
+          "transparent": false
+        }
+      },
+      "panel-2": {
+        "kind": "Panel",
+        "spec": {
+          "id": 2,
+          "title": "Histórico de incidentes · prioridade",
+          "description": "Histórico premium dos problemas retornados pela consulta Zabbix. A visualização mantém Average, High e Disaster, como no painel original, e normaliza datas para DD/MM/AAAA HH:mm.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "alexanderzobnin-zabbix-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "zabbix-monitoramento"
+                      },
+                      "spec": {
+                        "application": {
+                          "filter": ""
+                        },
+                        "countTriggersBy": "",
+                        "evaltype": "0",
+                        "functions": [],
+                        "group": {
+                          "filter": "/.*/"
+                        },
+                        "host": {
+                          "filter": "/.*/"
+                        },
+                        "item": {
+                          "filter": ""
+                        },
+                        "itemTag": {
+                          "filter": ""
+                        },
+                        "macro": {
+                          "filter": ""
+                        },
+                        "options": {
+                          "acknowledged": 2,
+                          "count": false,
+                          "disableDataAlignment": false,
+                          "hostProxy": false,
+                          "hostsInMaintenance": false,
+                          "limit": 1001,
+                          "minSeverity": 0,
+                          "severities": [],
+                          "showDisabledItems": false,
+                          "skipEmptyValues": false,
+                          "sortProblems": "default",
+                          "useTimeRange": false,
+                          "useTrends": "default",
+                          "useZabbixValueMapping": false
+                        },
+                        "proxy": {
+                          "filter": ""
+                        },
+                        "queryType": "5",
+                        "resultFormat": "time_series",
+                        "schema": 12,
+                        "showProblems": "history",
+                        "table": {
+                          "skipEmptyValues": false
+                        },
+                        "tags": {
+                          "filter": ""
+                        },
+                        "textFilter": "",
+                        "trigger": {
+                          "filter": ""
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "volkovlabs-echarts-panel",
+            "version": "7.2.5",
+            "spec": {
+              "options": {
+                "renderer": "canvas",
+                "getOption": "\nconst W = Math.max(1, context.panel.chart.getWidth());\nconst H = Math.max(1, context.panel.chart.getHeight());\nconst echarts = context.echarts;\n\nconst C = {\n  bg0: '#050B16', bg1: '#08111F', card: '#0D1B2E', card2: '#12243A',\n  border: 'rgba(174,186,213,0.16)', text: '#F4F7FC', sub: '#AEBAD5', mute: '#7F8DA8',\n  cyan: '#17C7D5', purple: '#7C3AED', green: '#14B8A6', orange: '#F59E0B',\n  red: '#EF4444', blue: '#38BDF8', gray: '#64748B', yellow: '#EAB308', deepRed: '#DC2626'\n};\n\nfunction vals(f) {\n  if (!f || f.values == null) return [];\n  if (Array.isArray(f.values)) return f.values;\n  if (typeof f.values.toArray === 'function') return f.values.toArray();\n  if (f.values.buffer && Array.isArray(f.values.buffer)) return f.values.buffer;\n  try { return Array.from(f.values); } catch (e) { return []; }\n}\n\nfunction normalizeTime(v) {\n  if (v === null || v === undefined || v === '') return null;\n  if (v instanceof Date) return v.getTime();\n  if (typeof v === 'object') {\n    if (v._d instanceof Date) return v._d.getTime();\n    if (typeof v.valueOf === 'function') {\n      const vv = v.valueOf();\n      if (vv !== v && Number.isFinite(Number(vv))) {\n        const n = Number(vv);\n        return Math.abs(n) < 1e12 ? n * 1000 : n;\n      }\n    }\n  }\n  const n = Number(v);\n  if (Number.isFinite(n)) return Math.abs(n) < 1e12 ? n * 1000 : n;\n  const parsed = Date.parse(String(v));\n  return Number.isFinite(parsed) ? parsed : null;\n}\n\nfunction fmtDateTime(v) {\n  const ts = normalizeTime(v);\n  if (ts === null) return '—';\n  const d = new Date(ts);\n  if (Number.isNaN(d.getTime())) return String(v ?? '—');\n  const z = n => String(n).padStart(2, '0');\n  return `${z(d.getDate())}/${z(d.getMonth() + 1)}/${d.getFullYear()} ${z(d.getHours())}:${z(d.getMinutes())}`;\n}\n\nfunction ageText(v) {\n  const ts = normalizeTime(v);\n  if (ts === null) return '—';\n  let sec = Math.max(0, Math.floor((Date.now() - ts) / 1000));\n  if (sec < 60) return `${sec}s`;\n  const min = Math.floor(sec / 60);\n  if (min < 60) return `${min} min`;\n  const h = Math.floor(min / 60);\n  if (h < 24) return `${h}h ${min % 60}m`;\n  const days = Math.floor(h / 24);\n  return `${days}d ${h % 24}h`;\n}\n\nfunction txt(x, y, text, size, color, weight, align = 'left', extra = {}) {\n  return {\n    type: 'text', silent: true,\n    style: {\n      x, y, text: String(text), font: `${weight || 500} ${size}px Inter, sans-serif`,\n      fill: color || C.text, textAlign: align, textVerticalAlign: 'middle', ...extra\n    }\n  };\n}\n\nfunction roundedCard(fill = C.card) {\n  return {\n    type: 'rect', silent: true,\n    shape: { x: 1, y: 1, width: Math.max(0, W - 2), height: Math.max(0, H - 2), r: 14 },\n    style: { fill, stroke: C.border, lineWidth: 1, shadowBlur: 18, shadowColor: 'rgba(0,0,0,.18)' }\n  };\n}\n\nfunction accentLine(color) {\n  return {\n    type: 'rect', silent: true,\n    shape: { x: 0, y: 0, width: 4, height: H, r: [14, 0, 0, 14] },\n    style: { fill: color }\n  };\n}\n\nfunction esc(v) {\n  return String(v ?? '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\"/g, '&quot;')\n    .replace(/'/g, '&#39;');\n}\n\nfunction objName(v) {\n  if (v === null || v === undefined) return '';\n  if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') return String(v);\n  if (Array.isArray(v)) return v.map(objName).filter(Boolean).join(', ');\n  if (typeof v === 'object') {\n    return String(v.name ?? v.host ?? v.value ?? v.tag ?? v.description ?? '');\n  }\n  return String(v);\n}\n\nfunction problemsFromFrames() {\n  const frames = (context.panel.data && context.panel.data.series) || [];\n  const out = [];\n  for (const frame of frames) {\n    if (!frame || !frame.fields) continue;\n    const pf = frame.fields.find(f => String(f.name).toLowerCase() === 'problems') ||\n      frame.fields.find(f => f.config && f.config.custom && f.config.custom.type === 'problems');\n    if (!pf) continue;\n    for (const p of vals(pf)) {\n      if (p && typeof p === 'object') out.push(p);\n    }\n  }\n  return out;\n}\n\nconst SEV = [\n  { short: 'N/C', label: 'Não classificado', color: C.gray },\n  { short: 'INFO', label: 'Informação', color: C.blue },\n  { short: 'AVISO', label: 'Warning', color: C.yellow },\n  { short: 'MÉDIA', label: 'Average', color: C.orange },\n  { short: 'ALTA', label: 'High', color: C.red },\n  { short: 'DESASTRE', label: 'Disaster', color: C.deepRed }\n];\n\nfunction sevRank(p) {\n  const n = Number(p && p.severity);\n  return Number.isFinite(n) && n >= 0 && n <= 5 ? n : null;\n}\n\nfunction sevMeta(p) {\n  const n = sevRank(p);\n  return n === null ? { short: 'N/C', label: 'Não classificado', color: C.gray } : SEV[n];\n}\n\nfunction hostName(p) {\n  const hs = p && p.hosts;\n  if (Array.isArray(hs) && hs.length) return objName(hs[0]) || '—';\n  return objName(hs) || '—';\n}\n\nfunction groupName(p) {\n  const gs = p && p.groups;\n  if (Array.isArray(gs) && gs.length) return gs.map(objName).filter(Boolean).slice(0, 2).join(' · ') || '';\n  return objName(gs);\n}\n\nfunction acknowledged(p) {\n  if (!p) return false;\n  if (p.acknowledged === true || p.acknowledged === 1 || String(p.acknowledged) === '1') return true;\n  return Array.isArray(p.acknowledges) && p.acknowledges.length > 0;\n}\n\nfunction ackSummary(p) {\n  const a = Array.isArray(p && p.acknowledges) ? p.acknowledges : [];\n  if (!a.length) return 'Sem reconhecimento';\n  const last = a[a.length - 1] || {};\n  const who = last.user || [last.name, last.surname].filter(Boolean).join(' ') || 'usuário';\n  const when = last.time || fmtDateTime(last.clock);\n  return `${who}${when && when !== '—' ? ' · ' + when : ''}`;\n}\n\nfunction isRecovered(p) {\n  return HISTORY_MODE && String(p && p.value) === '0';\n}\n\nfunction isRecent(p) {\n  const ts = normalizeTime(p && p.timestamp);\n  if (ts === null) return false;\n  return (Date.now() - ts) <= RECENT_MINUTES * 60 * 1000;\n}\n\nconst HISTORY_MODE = true;\nconst RECENT_MINUTES = 90;\nconst MIN_VISIBLE_SEVERITY = 3;\n\nlet rows = problemsFromFrames();\nrows = rows.filter(p => {\n  const s = sevRank(p);\n  return s === null || s >= MIN_VISIBLE_SEVERITY;\n});\nrows.sort((a, b) => {\n  const sa = sevRank(a) ?? -1;\n  const sb = sevRank(b) ?? -1;\n  if (sb !== sa) return sb - sa;\n  const ta = normalizeTime(a.timestamp) ?? 0;\n  const tb = normalizeTime(b.timestamp) ?? 0;\n  return tb - ta;\n});\n\nconst total = rows.length;\nconst counts = [0, 0, 0, 0, 0, 0];\nlet acked = 0;\nlet recent = 0;\nfor (const p of rows) {\n  const s = sevRank(p);\n  if (s !== null) counts[s]++;\n  if (acknowledged(p)) acked++;\n  if (isRecent(p)) recent++;\n}\n\nif (!total) {\n  return {\n    backgroundColor: 'transparent',\n    graphic: [\n      roundedCard(), accentLine(C.purple),\n      txt(22, 27, \"HISTÓRICO DE INCIDENTES · PRIORIDADE\", 14, C.text, 850),\n      txt(22, 53, \"Eventos históricos Average, High e Disaster · ordenados por severidade e última alteração.\", 10, C.sub, 500),\n      txt(22, Math.max(105, H * 0.48), 'Nenhum incidente encontrado', 18, C.text, 800),\n      txt(22, Math.max(134, H * 0.48 + 30), 'A consulta Zabbix não retornou eventos visíveis para esta classificação.', 11, C.mute, 500)\n    ],\n    xAxis: { show: false }, yAxis: { show: false }, series: []\n  };\n}\n\nconst visibleRows = Math.max(6, Math.min(13, Math.floor((H - 132) / 38)));\nconst compactMode = W < 1050;\nconst showGroup = W >= 1280;\nconst showOpdata = W >= 1180;\nconst showAck = W >= 900;\n\nconst graphics = [\n  roundedCard(), accentLine(C.purple),\n  txt(22, 24, \"HISTÓRICO DE INCIDENTES · PRIORIDADE\", 14, C.text, 850),\n  txt(22, 49, \"Eventos históricos Average, High e Disaster · ordenados por severidade e última alteração.\", 10, C.sub, 500),\n  txt(W - 22, 24, `${total.toLocaleString('pt-BR')} EVENTOS`, 10, C.purple, 850, 'right'),\n  txt(W - 22, 49, `${acked.toLocaleString('pt-BR')} reconhecidos · ${recent.toLocaleString('pt-BR')} recentes`, 9, C.mute, 650, 'right'),\n\n  { type: 'circle', silent: true, shape: { cx: 24, cy: 76, r: 4 }, style: { fill: C.deepRed } },\n  txt(34, 76, `Desastre ${counts[5]}`, 9, C.sub, 700),\n  { type: 'circle', silent: true, shape: { cx: 126, cy: 76, r: 4 }, style: { fill: C.red } },\n  txt(136, 76, `Alta ${counts[4]}`, 9, C.sub, 700),\n  { type: 'circle', silent: true, shape: { cx: 204, cy: 76, r: 4 }, style: { fill: C.orange } },\n  txt(214, 76, `Média ${counts[3]}`, 9, C.sub, 700),\n\n  txt(18, 98, 'SEVERIDADE', 8, C.mute, 800),\n  txt(W * (compactMode ? 0.14 : 0.12), 98, 'ÚLTIMA ALTERAÇÃO', 8, C.mute, 800),\n  txt(W * (compactMode ? 0.33 : 0.29), 98, 'HOST', 8, C.mute, 800),\n  txt(W * (compactMode ? 0.52 : 0.47), 98, 'PROBLEMA / DADOS OPERACIONAIS', 8, C.mute, 800)\n];\nif (showAck) graphics.push(txt(W * 0.89, 98, HISTORY_MODE ? 'STATUS / ACK' : 'RECONHECIMENTO', 8, C.mute, 800));\n\ngraphics.push({\n  type: 'line', silent: true,\n  shape: { x1: 16, y1: 108, x2: W - 16, y2: 108 },\n  style: { stroke: 'rgba(174,186,213,.12)', lineWidth: 1 }\n});\n\nfunction rowRender(params, api) {\n  const idx = Number(api.value(1));\n  const p = rows[idx];\n  if (!p) return null;\n  const key = String(idx);\n  const y = api.coord([0, key])[1];\n  let band = api.size([0, 1])[1];\n  if (!Number.isFinite(band) || band <= 0) band = 38;\n  const rh = Math.max(30, Math.min(44, band * 0.84));\n  const x0 = api.coord([0, key])[0];\n  const x100 = api.coord([100, key])[0];\n  const cx = pct => api.coord([pct, key])[0];\n  const sm = sevMeta(p);\n  const recentFlag = isRecent(p);\n  const rec = acknowledged(p);\n  const recovered = isRecovered(p);\n  const host = hostName(p);\n  const group = groupName(p);\n  const problem = String(p.name || p.description || 'Evento Zabbix');\n  const op = String(p.opdata || '');\n  const date = fmtDateTime(p.timestamp);\n  const age = ageText(p.timestamp);\n\n  const bg = idx % 2 === 0 ? 'rgba(13,27,46,.78)' : 'rgba(18,36,58,.58)';\n  const children = [\n    {\n      type: 'rect',\n      shape: { x: x0 + 2, y: y - rh / 2, width: Math.max(0, x100 - x0 - 5), height: rh, r: 7 },\n      style: {\n        fill: recentFlag ? 'rgba(23,199,213,.055)' : bg,\n        stroke: recentFlag ? 'rgba(23,199,213,.20)' : 'rgba(174,186,213,.055)',\n        lineWidth: 1\n      }\n    },\n    {\n      type: 'rect',\n      shape: { x: x0 + 2, y: y - rh / 2, width: 3, height: rh, r: [7, 0, 0, 7] },\n      style: { fill: sm.color }\n    },\n    { type: 'circle', shape: { cx: cx(1.7), cy: y, r: 4.2 }, style: { fill: sm.color } },\n    {\n      type: 'text',\n      style: { x: cx(2.7), y, text: sm.short, font: '750 9px Inter, sans-serif', fill: sm.color, verticalAlign: 'middle' }\n    },\n    {\n      type: 'text',\n      style: { x: cx(compactMode ? 14 : 12), y: y - 7, text: date, font: '650 10px Inter, sans-serif', fill: C.text, verticalAlign: 'middle' }\n    },\n    {\n      type: 'text',\n      style: { x: cx(compactMode ? 14 : 12), y: y + 9, text: age, font: '500 9px Inter, sans-serif', fill: recentFlag ? C.cyan : C.mute, verticalAlign: 'middle' }\n    },\n    {\n      type: 'text',\n      style: {\n        x: cx(compactMode ? 33 : 29), y: y - (showGroup && group ? 7 : 0), text: host,\n        font: '700 10px Inter, sans-serif', fill: C.text, verticalAlign: 'middle',\n        width: Math.max(80, cx(compactMode ? 50 : 45.5) - cx(compactMode ? 33 : 29) - 10), overflow: 'truncate', ellipsis: '…'\n      }\n    },\n    {\n      type: 'text',\n      style: {\n        x: cx(compactMode ? 52 : 47), y: y - (showOpdata && op ? 7 : 0), text: problem,\n        font: '650 10px Inter, sans-serif', fill: C.text, verticalAlign: 'middle',\n        width: Math.max(150, cx(showAck ? 87.5 : 98) - cx(compactMode ? 52 : 47) - 12), overflow: 'truncate', ellipsis: '…'\n      }\n    }\n  ];\n\n  if (showGroup && group) {\n    children.push({\n      type: 'text',\n      style: {\n        x: cx(29), y: y + 9, text: group, font: '500 8.5px Inter, sans-serif', fill: C.mute,\n        verticalAlign: 'middle', width: Math.max(80, cx(45.5) - cx(29) - 10), overflow: 'truncate', ellipsis: '…'\n      }\n    });\n  }\n\n  if (showOpdata && op) {\n    children.push({\n      type: 'text',\n      style: {\n        x: cx(47), y: y + 9, text: op, font: '500 8.5px Inter, sans-serif', fill: C.mute,\n        verticalAlign: 'middle', width: Math.max(150, cx(showAck ? 87.5 : 98) - cx(47) - 12), overflow: 'truncate', ellipsis: '…'\n      }\n    });\n  }\n\n  if (showAck) {\n    let label = rec ? 'RECONHECIDO' : 'PENDENTE';\n    let color = rec ? C.green : C.orange;\n    if (HISTORY_MODE && recovered) { label = 'RECUPERADO'; color = C.green; }\n    children.push(\n      { type: 'circle', shape: { cx: cx(89.2), cy: y - 1, r: 3.5 }, style: { fill: color } },\n      {\n        type: 'text',\n        style: {\n          x: cx(90.2), y: y - 1, text: label, font: '750 8.5px Inter, sans-serif', fill: color,\n          verticalAlign: 'middle', width: Math.max(55, x100 - cx(90.2) - 8), overflow: 'truncate', ellipsis: '…'\n        }\n      }\n    );\n  }\n\n  return { type: 'group', children };\n}\n\nconst zoom = total > visibleRows ? [\n  {\n    type: 'inside', yAxisIndex: 0, startValue: 0, endValue: visibleRows - 1,\n    zoomOnMouseWheel: false, moveOnMouseWheel: true, moveOnMouseMove: true\n  },\n  {\n    type: 'slider', yAxisIndex: 0, right: 5, top: 112, bottom: 18, width: 7,\n    startValue: 0, endValue: visibleRows - 1, showDetail: false, showDataShadow: false,\n    borderColor: 'transparent', backgroundColor: 'rgba(127,141,168,.08)',\n    fillerColor: 'rgba(23,199,213,.24)', handleSize: 0,\n    textStyle: { color: C.mute }\n  }\n] : [];\n\nreturn {\n  backgroundColor: 'transparent',\n  animation: false,\n  graphic: graphics,\n  grid: { left: 16, right: total > visibleRows ? 18 : 12, top: 112, bottom: 16, containLabel: false },\n  tooltip: {\n    trigger: 'item',\n    backgroundColor: 'rgba(5,11,22,.98)', borderColor: C.border, borderWidth: 1,\n    padding: [11, 13], textStyle: { color: C.text, fontSize: 11 },\n    formatter: function(params) {\n      const raw = params && params.data;\n      const idx = raw ? Number(raw[1]) : -1;\n      const p = rows[idx];\n      if (!p) return '';\n      const sm = sevMeta(p);\n      const tags = Array.isArray(p.tags) ? p.tags.map(t => {\n        const k = t && (t.tag || t.name) ? (t.tag || t.name) : '';\n        const v = t && t.value ? t.value : '';\n        return [k, v].filter(Boolean).join(':');\n      }).filter(Boolean).join(', ') : objName(p.tags);\n      const op = p.opdata ? String(p.opdata) : '';\n      const desc = String(p.name || p.description || 'Evento Zabbix');\n      const state = HISTORY_MODE && isRecovered(p) ? 'Recuperado' : (acknowledged(p) ? 'Reconhecido' : 'Pendente de reconhecimento');\n      let html = `<div style=\"min-width:320px;max-width:620px\">`;\n      html += `<div style=\"font-weight:800;font-size:12px;color:${sm.color};margin-bottom:7px\">${esc(sm.label)} · ${esc(state)}</div>`;\n      html += `<div style=\"font-weight:750;color:${C.text};margin-bottom:9px\">${esc(desc)}</div>`;\n      html += `<div style=\"color:${C.sub};line-height:1.65\">`;\n      html += `<b>Host:</b> ${esc(hostName(p))}<br>`;\n      html += `<b>Última alteração:</b> ${esc(fmtDateTime(p.timestamp))} · ${esc(ageText(p.timestamp))}<br>`;\n      if (groupName(p)) html += `<b>Grupo:</b> ${esc(groupName(p))}<br>`;\n      if (op) html += `<b>Dados operacionais:</b> ${esc(op)}<br>`;\n      html += `<b>Reconhecimento:</b> ${esc(ackSummary(p))}`;\n      if (tags) html += `<br><b>Tags:</b> ${esc(tags)}`;\n      html += `</div></div>`;\n      return html;\n    }\n  },\n  xAxis: { type: 'value', min: 0, max: 100, show: false },\n  yAxis: {\n    type: 'category', inverse: true, show: false,\n    data: rows.map((_, i) => String(i)),\n    boundaryGap: true\n  },\n  dataZoom: zoom,\n  series: [\n    {\n      type: 'custom', coordinateSystem: 'cartesian2d', renderItem: rowRender,\n      data: rows.map((_, i) => [0, String(i)]),\n      encode: { x: 0, y: 1 },\n      silent: false,\n      progressive: 200,\n      progressiveThreshold: 300\n    }\n  ]\n};\n",
+                "theme": "default"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  }
+                },
+                "overrides": []
+              }
+            }
+          },
+          "transparent": false
+        }
+      },
+      "panel-premium-header": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1000,
+          "title": "",
+          "description": "Cabeçalho visual do dashboard premium de incidentes.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "volkovlabs-echarts-panel",
+            "version": "7.2.5",
+            "spec": {
+              "options": {
+                "renderer": "canvas",
+                "getOption": "\nconst W = Math.max(1, context.panel.chart.getWidth());\nconst H = Math.max(1, context.panel.chart.getHeight());\nconst echarts = context.echarts;\nconst C = {\n  card:'#0D1B2E', border:'rgba(174,186,213,0.16)', text:'#F4F7FC', sub:'#AEBAD5', mute:'#7F8DA8',\n  cyan:'#17C7D5', purple:'#7C3AED', orange:'#F59E0B', red:'#EF4444'\n};\nfunction txt(x,y,text,size,color,weight,align='left',extra={}){\n  return {type:'text',silent:true,style:{x,y,text:String(text),font:`${weight||500} ${size}px Inter, sans-serif`,fill:color||C.text,textAlign:align,textVerticalAlign:'middle',...extra}};\n}\nconst bg = new echarts.graphic.LinearGradient(0,0,1,1,[\n  {offset:0,color:'#071426'},{offset:.52,color:'#09182B'},{offset:1,color:'#121831'}\n]);\nreturn {\n  backgroundColor:'transparent', animationDuration:400,\n  graphic:[\n    {type:'rect',silent:true,shape:{x:1,y:1,width:Math.max(0,W-2),height:Math.max(0,H-2),r:16},style:{fill:bg,stroke:'rgba(23,199,213,.22)',lineWidth:1,shadowBlur:24,shadowColor:'rgba(0,0,0,.22)'}},\n    {type:'rect',silent:true,shape:{x:0,y:0,width:5,height:H,r:[16,0,0,16]},style:{fill:C.cyan}},\n    txt(26,Math.max(30,H*.31),'GERENCIAMENTO DE INCIDENTES',Math.max(19,Math.min(31,W/35)),C.text,850),\n    txt(27,Math.max(58,H*.56),'Zabbix · problemas ativos, severidade, reconhecimento e histórico operacional',Math.max(10,Math.min(13,W/95)),C.sub,500),\n    txt(27,H-19,'ZABBIX  •  REFRESH: 1 MIN  •  DATAS: DD/MM/AAAA HH:mm',10,C.mute,750),\n    {type:'circle',silent:true,shape:{cx:W-34,cy:29,r:7},style:{fill:C.cyan,shadowBlur:14,shadowColor:C.cyan}},\n    txt(W-52,55,'INCIDENTES',10,C.mute,800,'right')\n  ],\n  xAxis:{show:false},yAxis:{show:false},series:[]\n};\n",
+                "theme": "default"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  }
+                },
+                "overrides": []
+              }
+            }
+          },
+          "transparent": false
+        }
+      },
+      "panel-severity-analytics": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1001,
+          "title": "Problemas ativos · por severidade",
+          "description": "Distribuição dos problemas ativos por severidade, calculada no Business Charts a partir da consulta Zabbix existente.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "alexanderzobnin-zabbix-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "zabbix-monitoramento"
+                      },
+                      "spec": {
+                        "application": {
+                          "filter": ""
+                        },
+                        "countTriggersBy": "",
+                        "evaltype": "0",
+                        "functions": [],
+                        "group": {
+                          "filter": "/.*/"
+                        },
+                        "host": {
+                          "filter": "/.*/"
+                        },
+                        "item": {
+                          "filter": ""
+                        },
+                        "itemTag": {
+                          "filter": ""
+                        },
+                        "macro": {
+                          "filter": ""
+                        },
+                        "options": {
+                          "acknowledged": 2,
+                          "count": false,
+                          "disableDataAlignment": false,
+                          "hostProxy": false,
+                          "hostsInMaintenance": false,
+                          "limit": 1001,
+                          "minSeverity": 0,
+                          "severities": [
+                            4,
+                            5,
+                            3
+                          ],
+                          "showDisabledItems": false,
+                          "skipEmptyValues": false,
+                          "sortProblems": "default",
+                          "useTimeRange": false,
+                          "useTrends": "default",
+                          "useZabbixValueMapping": false
+                        },
+                        "proxy": {
+                          "filter": ""
+                        },
+                        "queryType": "5",
+                        "resultFormat": "time_series",
+                        "schema": 12,
+                        "showProblems": "problems",
+                        "table": {
+                          "skipEmptyValues": false
+                        },
+                        "tags": {
+                          "filter": ""
+                        },
+                        "textFilter": "",
+                        "trigger": {
+                          "filter": ""
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "volkovlabs-echarts-panel",
+            "version": "7.2.5",
+            "spec": {
+              "options": {
+                "renderer": "canvas",
+                "getOption": "\nconst W = Math.max(1, context.panel.chart.getWidth());\nconst H = Math.max(1, context.panel.chart.getHeight());\n\nconst C = {\n  card:'#0D1B2E', card2:'#12243A', border:'rgba(174,186,213,0.16)',\n  text:'#F4F7FC', sub:'#AEBAD5', mute:'#7F8DA8', cyan:'#17C7D5', purple:'#7C3AED',\n  green:'#14B8A6', orange:'#F59E0B', red:'#EF4444', blue:'#38BDF8', gray:'#64748B',\n  yellow:'#EAB308', deepRed:'#DC2626'\n};\n\nfunction vals(f) {\n  if (!f || f.values == null) return [];\n  if (Array.isArray(f.values)) return f.values;\n  if (typeof f.values.toArray === 'function') return f.values.toArray();\n  if (f.values.buffer && Array.isArray(f.values.buffer)) return f.values.buffer;\n  try { return Array.from(f.values); } catch (e) { return []; }\n}\n\nfunction txt(x,y,text,size,color,weight,align='left',extra={}) {\n  return {type:'text',silent:true,style:{x,y,text:String(text),font:`${weight||500} ${size}px Inter, sans-serif`,fill:color||C.text,textAlign:align,textVerticalAlign:'middle',...extra}};\n}\n\nfunction roundedCard(fill=C.card) {\n  return {type:'rect',silent:true,shape:{x:1,y:1,width:Math.max(0,W-2),height:Math.max(0,H-2),r:14},style:{fill,stroke:C.border,lineWidth:1,shadowBlur:18,shadowColor:'rgba(0,0,0,.18)'}};\n}\n\nfunction accentLine(color) {\n  return {type:'rect',silent:true,shape:{x:0,y:0,width:4,height:H,r:[14,0,0,14]},style:{fill:color}};\n}\n\nfunction problemsFromFrames() {\n  const frames=(context.panel.data && context.panel.data.series)||[];\n  const out=[];\n  for (const frame of frames) {\n    if (!frame || !frame.fields) continue;\n    const pf=frame.fields.find(f=>String(f.name).toLowerCase()==='problems') ||\n      frame.fields.find(f=>f.config && f.config.custom && f.config.custom.type==='problems');\n    if (!pf) continue;\n    for (const p of vals(pf)) if (p && typeof p==='object') out.push(p);\n  }\n  return out;\n}\n\nconst SEV=[\n  {rank:0,name:'Não classificado',short:'N/C',color:C.gray},\n  {rank:1,name:'Informação',short:'Info',color:C.blue},\n  {rank:2,name:'Warning',short:'Warning',color:C.yellow},\n  {rank:3,name:'Average',short:'Average',color:C.orange},\n  {rank:4,name:'High',short:'High',color:C.red},\n  {rank:5,name:'Disaster',short:'Disaster',color:C.deepRed}\n];\n\nfunction sevRank(p) {\n  const n=Number(p && p.severity);\n  return Number.isFinite(n) && n>=0 && n<=5 ? n : null;\n}\n\nconst problems=problemsFromFrames();\nconst counts=new Map();\nfor (const p of problems) {\n  const s=sevRank(p);\n  if (s===null) continue;\n  counts.set(s,(counts.get(s)||0)+1);\n}\n\nconst data=SEV\n  .filter(s=>(counts.get(s.rank)||0)>0)\n  .sort((a,b)=>b.rank-a.rank)\n  .map(s=>({name:s.name,value:counts.get(s.rank)||0,itemStyle:{color:s.color},severity:s.rank}));\n\nconst total=data.reduce((s,x)=>s+x.value,0);\nconst dominant=data.length ? data.reduce((a,b)=>b.value>a.value?b:a) : null;\n\nif (!total) {\n  return {\n    backgroundColor:'transparent',\n    graphic:[roundedCard(),accentLine(C.purple),txt(20,24,'PROBLEMAS ATIVOS · POR SEVERIDADE',13,C.text,850),txt(20,48,'Distribuição dos problemas retornados pela consulta Zabbix ativa.',10,C.sub,500),txt(20,H*.53,'Sem problemas para classificar',16,C.text,750)],\n    series:[]\n  };\n}\n\nconst pieCenterX=W<600?'50%':'36%';\nconst legendRight=W<600?'center':14;\nconst legendTop=W<600?'76%':78;\nconst legendOrient=W<600?'horizontal':'vertical';\n\nreturn {\n  backgroundColor:'transparent',\n  animationDuration:450,\n  graphic:[\n    roundedCard(),accentLine(C.purple),\n    txt(20,24,'PROBLEMAS ATIVOS · POR SEVERIDADE',13,C.text,850),\n    txt(20,48,'Distribuição do universo devolvido pela consulta de problemas ativos.',10,C.sub,500),\n    txt(W-18,24,`${total.toLocaleString('pt-BR')} PROBLEMAS`,9,C.purple,850,'right')\n  ],\n  tooltip:{\n    trigger:'item',\n    backgroundColor:'rgba(5,11,22,.98)',borderColor:C.border,borderWidth:1,\n    textStyle:{color:C.text,fontSize:11},\n    formatter:function(p){\n      const pct=total>0?(p.value/total*100):0;\n      return `<b>${p.name}</b><br>${p.marker} ${Number(p.value).toLocaleString('pt-BR')} problemas · ${pct.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%`;\n    }\n  },\n  legend:{\n    orient:legendOrient,right:legendRight,top:legendTop,\n    textStyle:{color:C.sub,fontSize:10},\n    itemWidth:10,itemHeight:10,itemGap:12,\n    formatter:function(name){\n      const item=data.find(x=>x.name===name);\n      return item?`${name}  ${item.value.toLocaleString('pt-BR')}`:name;\n    }\n  },\n  series:[{\n    name:'Severidade',type:'pie',\n    radius:W<600?['36%','58%']:['39%','65%'],\n    center:[pieCenterX,W<600?'48%':'58%'],\n    startAngle:90,clockwise:true,avoidLabelOverlap:true,\n    itemStyle:{borderColor:C.card,borderWidth:3,borderRadius:6},\n    label:{show:false},labelLine:{show:false},\n    emphasis:{scale:true,scaleSize:6},\n    data\n  }],\n  title:{\n    text:total.toLocaleString('pt-BR'),\n    subtext:dominant?`Maior: ${dominant.name}`:'Problemas',\n    left:pieCenterX,top:W<600?'38%':'48%',textAlign:'center',\n    textStyle:{color:C.text,fontSize:24,fontWeight:850},\n    subtextStyle:{color:C.mute,fontSize:9,fontWeight:600}\n  }\n};\n",
+                "theme": "default"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-alerts-hour": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1002,
+          "title": "Alertas por hora · histórico",
+          "description": "Quantidade de eventos históricos agrupados por hora no JavaScript, preservando a consulta Zabbix existente.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "alexanderzobnin-zabbix-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "zabbix-monitoramento"
+                      },
+                      "spec": {
+                        "application": {
+                          "filter": ""
+                        },
+                        "countTriggersBy": "",
+                        "evaltype": "0",
+                        "functions": [],
+                        "group": {
+                          "filter": "/.*/"
+                        },
+                        "host": {
+                          "filter": "/.*/"
+                        },
+                        "item": {
+                          "filter": ""
+                        },
+                        "itemTag": {
+                          "filter": ""
+                        },
+                        "macro": {
+                          "filter": ""
+                        },
+                        "options": {
+                          "acknowledged": 2,
+                          "count": false,
+                          "disableDataAlignment": false,
+                          "hostProxy": false,
+                          "hostsInMaintenance": false,
+                          "limit": 1001,
+                          "minSeverity": 0,
+                          "severities": [],
+                          "showDisabledItems": false,
+                          "skipEmptyValues": false,
+                          "sortProblems": "default",
+                          "useTimeRange": false,
+                          "useTrends": "default",
+                          "useZabbixValueMapping": false
+                        },
+                        "proxy": {
+                          "filter": ""
+                        },
+                        "queryType": "5",
+                        "resultFormat": "time_series",
+                        "schema": 12,
+                        "showProblems": "history",
+                        "table": {
+                          "skipEmptyValues": false
+                        },
+                        "tags": {
+                          "filter": ""
+                        },
+                        "textFilter": "",
+                        "trigger": {
+                          "filter": ""
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "volkovlabs-echarts-panel",
+            "version": "7.2.5",
+            "spec": {
+              "options": {
+                "renderer": "canvas",
+                "getOption": "const W = Math.max(1, context.panel.chart.getWidth());\nconst H = Math.max(1, context.panel.chart.getHeight());\nconst echarts = context.echarts;\n\nconst C = {\n  card:'#0D1B2E', border:'rgba(174,186,213,0.16)', text:'#F4F7FC', sub:'#AEBAD5', mute:'#7F8DA8',\n  cyan:'#17C7D5', purple:'#7C3AED', green:'#14B8A6', orange:'#F59E0B', red:'#EF4444', gray:'#64748B'\n};\n\nfunction vals(f) {\n  if (!f || f.values == null) return [];\n  if (Array.isArray(f.values)) return f.values;\n  if (typeof f.values.toArray === 'function') return f.values.toArray();\n  if (f.values.buffer && Array.isArray(f.values.buffer)) return f.values.buffer;\n  try { return Array.from(f.values); } catch (e) { return []; }\n}\n\nfunction normalizeTime(v) {\n  if (v === null || v === undefined || v === '') return null;\n  if (v instanceof Date) return v.getTime();\n  if (typeof v === 'object') {\n    if (v._d instanceof Date) return v._d.getTime();\n    if (typeof v.valueOf === 'function') {\n      const vv = v.valueOf();\n      if (vv !== v && Number.isFinite(Number(vv))) {\n        const n = Number(vv);\n        return Math.abs(n) < 1e12 ? n * 1000 : n;\n      }\n    }\n  }\n  const n = Number(v);\n  if (Number.isFinite(n)) return Math.abs(n) < 1e12 ? n * 1000 : n;\n  const parsed = Date.parse(String(v));\n  return Number.isFinite(parsed) ? parsed : null;\n}\n\nfunction fmtDateTime(v) {\n  const ts = normalizeTime(v);\n  if (ts === null) return '—';\n  const d = new Date(ts);\n  if (Number.isNaN(d.getTime())) return String(v ?? '—');\n  const z = n => String(n).padStart(2, '0');\n  return `${z(d.getDate())}/${z(d.getMonth()+1)}/${d.getFullYear()} ${z(d.getHours())}:${z(d.getMinutes())}`;\n}\n\nfunction fmtAxis(v) {\n  const ts = normalizeTime(v);\n  if (ts === null) return '';\n  const d = new Date(ts);\n  if (Number.isNaN(d.getTime())) return '';\n  const z = n => String(n).padStart(2, '0');\n  return `${z(d.getDate())}/${z(d.getMonth()+1)} ${z(d.getHours())}:00`;\n}\n\nfunction txt(x, y, text, size, color, weight, align='left', extra={}) {\n  return {\n    type:'text', silent:true,\n    style:{\n      x, y, text:String(text),\n      font:`${weight || 500} ${size}px Inter, sans-serif`,\n      fill:color || C.text, textAlign:align, textVerticalAlign:'middle', ...extra\n    }\n  };\n}\n\nfunction roundedCard(fill=C.card) {\n  return {\n    type:'rect', silent:true,\n    shape:{x:1, y:1, width:Math.max(0, W-2), height:Math.max(0, H-2), r:14},\n    style:{fill, stroke:C.border, lineWidth:1, shadowBlur:18, shadowColor:'rgba(0,0,0,.18)'}\n  };\n}\n\nfunction accentLine(color) {\n  return {\n    type:'rect', silent:true,\n    shape:{x:0, y:0, width:4, height:H, r:[14,0,0,14]},\n    style:{fill:color}\n  };\n}\n\nfunction problemsFromFrames() {\n  const frames = (context.panel.data && context.panel.data.series) || [];\n  const out = [];\n  for (const frame of frames) {\n    if (!frame || !frame.fields) continue;\n    const pf = frame.fields.find(f => String(f.name).toLowerCase() === 'problems') ||\n      frame.fields.find(f => f.config && f.config.custom && f.config.custom.type === 'problems');\n    if (!pf) continue;\n    for (const p of vals(pf)) {\n      if (p && typeof p === 'object') out.push(p);\n    }\n  }\n  return out;\n}\n\nfunction hourBucket(ts) {\n  const d = new Date(ts);\n  d.setMinutes(0, 0, 0);\n  return d.getTime();\n}\n\nconst problems = problemsFromFrames();\nconst buckets = new Map();\n\nfor (const p of problems) {\n  const ts = normalizeTime(p && p.timestamp);\n  if (ts === null) continue;\n  const hour = hourBucket(ts);\n  buckets.set(hour, (buckets.get(hour) || 0) + 1);\n}\n\nlet ordered = [...buckets.entries()].sort((a,b) => a[0] - b[0]);\n\nif (!ordered.length) {\n  return {\n    backgroundColor:'transparent',\n    graphic:[\n      roundedCard(), accentLine(C.cyan),\n      txt(20,24,'ALERTAS POR HORA · HISTÓRICO',13,C.text,850),\n      txt(20,48,'Quantidade de eventos históricos agrupados por hora no Business Charts.',10,C.sub,500),\n      txt(20,H*0.53,'Sem eventos temporais disponíveis',16,C.text,750)\n    ],\n    xAxis:{show:false}, yAxis:{show:false}, series:[]\n  };\n}\n\n/*\n * Preenche horas sem evento com zero para preservar a continuidade temporal,\n * mas cada bucket continua sendo desenhado como uma barra independente.\n */\nconst minTs = ordered[0][0];\nconst maxTs = ordered[ordered.length - 1][0];\nconst spanHours = Math.floor((maxTs - minTs) / 3600000) + 1;\n\nif (spanHours <= 744) {\n  const filled = [];\n  for (let t = minTs; t <= maxTs; t += 3600000) {\n    filled.push([t, buckets.get(t) || 0]);\n  }\n  ordered = filled;\n}\n\nconst total = ordered.reduce((sum, point) => sum + point[1], 0);\nconst activeHours = ordered.reduce((sum, point) => sum + (point[1] > 0 ? 1 : 0), 0);\nlet peak = ordered[0];\nfor (const point of ordered) {\n  if (point[1] > peak[1]) peak = point;\n}\n\nconst showLabels = activeHours <= 36 && W >= 760;\n\nreturn {\n  backgroundColor:'transparent',\n  animationDuration:450,\n\n  graphic:[\n    roundedCard(),\n    accentLine(C.cyan),\n    txt(20,24,'ALERTAS POR HORA · HISTÓRICO',13,C.text,850),\n    txt(20,48,'Quantidade de eventos históricos por bucket de 1 hora. Cada coluna representa uma hora.',10,C.sub,500),\n    txt(W-18,24,`${total.toLocaleString('pt-BR')} EVENTOS · ${activeHours.toLocaleString('pt-BR')} HORAS COM ALERTA`,9,C.cyan,850,'right'),\n    txt(W-18,47,`Pico ${peak[1].toLocaleString('pt-BR')} · ${fmtDateTime(peak[0])}`,9,C.mute,650,'right')\n  ],\n\n  grid:{left:54,right:22,top:82,bottom:50},\n\n  tooltip:{\n    trigger:'axis',\n    backgroundColor:'rgba(5,11,22,.98)',\n    borderColor:C.border,\n    borderWidth:1,\n    textStyle:{color:C.text,fontSize:11},\n    axisPointer:{type:'shadow',shadowStyle:{color:'rgba(23,199,213,.07)'}},\n    formatter:function(params) {\n      if (!params || !params.length) return '';\n      const p = params[0];\n      const value = Array.isArray(p.value) ? p.value[1] : p.value;\n      const ts = Array.isArray(p.value) ? p.value[0] : p.axisValue;\n      return `<b>${fmtDateTime(ts)}</b><br>${p.marker} Alertas: <b>${Number(value || 0).toLocaleString('pt-BR')}</b>`;\n    }\n  },\n\n  xAxis:{\n    type:'time',\n    boundaryGap:[0.02,0.02],\n    axisLine:{lineStyle:{color:'rgba(174,186,213,.18)'}},\n    axisTick:{show:false},\n    splitLine:{show:false},\n    axisLabel:{\n      color:C.mute,\n      fontSize:9,\n      hideOverlap:true,\n      formatter:function(v){ return fmtAxis(v); }\n    },\n    axisPointer:{\n      label:{\n        formatter:function(p){ return fmtDateTime(p.value); }\n      }\n    }\n  },\n\n  yAxis:{\n    type:'value',\n    min:0,\n    minInterval:1,\n    axisLine:{show:false},\n    axisTick:{show:false},\n    splitLine:{lineStyle:{color:'rgba(174,186,213,.08)'}},\n    axisLabel:{\n      color:C.mute,\n      fontSize:9,\n      formatter:function(v){ return Number(v).toLocaleString('pt-BR'); }\n    }\n  },\n\n  series:[{\n    name:'Alertas por hora',\n    type:'bar',\n    data:ordered,\n    barMaxWidth:30,\n    barMinHeight:2,\n    itemStyle:{\n      color:new echarts.graphic.LinearGradient(0,0,0,1,[\n        {offset:0,color:'rgba(23,199,213,1)'},\n        {offset:1,color:'rgba(23,199,213,.50)'}\n      ]),\n      borderRadius:[5,5,1,1]\n    },\n    emphasis:{\n      focus:'series',\n      itemStyle:{shadowBlur:12,shadowColor:'rgba(23,199,213,.30)'}\n    },\n    label:{\n      show:showLabels,\n      position:'top',\n      distance:5,\n      color:C.sub,\n      fontSize:9,\n      fontWeight:700,\n      formatter:function(p){\n        const v = Array.isArray(p.value) ? Number(p.value[1]) : Number(p.value);\n        return v > 0 ? v.toLocaleString('pt-BR') : '';\n      }\n    },\n    z:3\n  }]\n};",
+                "theme": "default"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "kind": "GridLayout",
+      "spec": {
+        "items": [
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 0,
+              "width": 24,
+              "height": 4,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-premium-header"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 4,
+              "width": 8,
+              "height": 10,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-severity-analytics"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 8,
+              "y": 4,
+              "width": 16,
+              "height": 10,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-alerts-hour"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 14,
+              "width": 24,
+              "height": 15,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-1"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 29,
+              "width": 24,
+              "height": 17,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-2"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "links": [],
+    "liveNow": false,
+    "preload": false,
+    "tags": [
+      "business-charts",
+      "grafana",
+      "zabbix",
+      "incidentes",
+      "community"
+    ],
+    "timeSettings": {
+      "timezone": "browser",
+      "from": "now-30m",
+      "to": "now",
+      "autoRefresh": "1m",
+      "autoRefreshIntervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "hideTimepicker": false,
+      "weekStart": "monday",
+      "fiscalYearStartMonth": 0
+    },
+    "title": "GERENCIAMENTO DE INCIDENTES",
+    "variables": [],
+    "description": "Dashboard de gerenciamento de incidentes feito com Business Charts para Grafana e que utiliza o datasource Zabbix. Desenvolvido por Evandro C Santos."
+  }
+}
