@@ -3,14 +3,13 @@
 Este repositório contém o modelo completo (export em JSON / As-Code format) do dashboard **Gerenciamento de Incidentes** para o **Grafana (v12+)**, integrado diretamente ao **Zabbix** e renderizado utilizando o plugin **Business Charts (Volkov Labs - Apache ECharts)**.
 
 ## Demonstração do Dashboard
-### Visão Geral do Dashboard
-<img width="1672" height="941" alt="visao_geral_gerenciamento_de_incidentes" src="https://github.com/user-attachments/assets/13afb4c0-32ae-4018-8a91-3a74638de31b" />
+| Visão Geral do Dashboard |
+| :---: |
+| <img width="1672" height="941" alt="visao_geral_gerenciamento_de_incidentes" src="https://github.com/user-attachments/assets/13afb4c0-32ae-4018-8a91-3a74638de31b" /> |
 
-### Distribuição de Problemas por Severidade
-<img width="1448" height="1086" alt="grafico_problemas_por_severidade" src="https://github.com/user-attachments/assets/2db3ef08-57d9-4b9b-accb-07d1f07c50c7" />
-
-### Histórico de Alertas por Hora
-<img width="1448" height="1086" alt="grafico_alertas_por_hora" src="https://github.com/user-attachments/assets/6b2ae556-2a61-403a-be72-c286f8a985c6" />
+| Distribuição de Problemas por Severidade | Histórico de Alertas por Hora |
+| :---: | :---: |
+| <img width="1448" height="1086" alt="grafico_problemas_por_severidade" src="https://github.com/user-attachments/assets/2db3ef08-57d9-4b9b-accb-07d1f07c50c7" /> | <img width="1448" height="1086" alt="grafico_alertas_por_hora" src="https://github.com/user-attachments/assets/6b2ae556-2a61-403a-be72-c286f8a985c6" /> |
 
 ## Visão Geral
 O dashboard foi projetado para centros de operações de rede (NOC/SOC) que necessitam de uma visualização moderna, limpa e de alta performance dos problemas e alertas monitorados pelo **Zabbix**. 
